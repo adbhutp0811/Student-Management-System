@@ -77,6 +77,10 @@ _db_url = _os.environ.get('DATABASE_URL') or env('DATABASE_URL')
 if _db_url:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default=_db_url, conn_max_age=600)}
+elif _os.environ.get('RENDER') and _os.environ.get('PGHOST'):
+    import dj_database_url
+    _db_url = f"postgresql://{_os.environ.get('PGUSER')}:{_os.environ.get('PGPASSWORD')}@{_os.environ.get('PGHOST')}:{_os.environ.get('PGPORT', '5432')}/{_os.environ.get('PGDATABASE')}"
+    DATABASES = {'default': dj_database_url.config(default=_db_url, conn_max_age=600)}
 elif env('DJANGO_DB_ENGINE', default='sqlite') == 'mysql':
     DATABASES = {
         'default': {
