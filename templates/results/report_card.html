@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Report Card - {{ student.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <h4 class="mb-0"><i class="bi bi-card-text"></i> Report Card</h4>
+    <div>
+        <select id="examSelect" class="form-select d-inline-block w-auto" onchange="window.location.href='?exam='+this.value">
+            <option value="">Select Exam</option>
+            {% for e in exams %}
+            <option value="{{ e.id }}" {% if exam.id == e.id %}selected{% endif %}>{{ e.name }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+    </div>
+</div>
+
+{% if results %}
+<div class="report-card">
+    <div class="text-center mb-4">
+        <h3>Student Management System</h3>
+        <h5>Report Card</h5>
+        <p class="text-muted">{{ exam.name }} ({{ exam.get_exam_type_display }}) - {{ exam.academic_year }}</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-6">
+            <table class="table table-sm table-borderless">
+                <tr><th>Student Name:</th><td>{{ student.full_name }}</td></tr>
+                <tr><th>Roll Number:</th><td>{{ student.roll_number }}</td></tr>
+                <tr><th>Branch:</th><td>{{ student.student_class }}</td></tr>
+            </table>
+        </div>
+        <div class="col-6 text-end">
+            <table class="table table-sm table-borderless">
+                <tr><th>Date of Birth:</th><td>{{ student.date_of_birth }}</td></tr>
+                <tr><th>Gender:</th><td>{{ student.get_gender_display }}</td></tr>
+                <tr><th>Guardian:</th><td>{{ student.guardian_name }}</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Subject</th>
+                <th>Max Marks</th>
+                <th>Marks Obtained</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in results %}
+            <tr>
+                <td>{{ r.subject.name }}</td>
+                <td>{{ r.subject.max_marks }}</td>
+                <td>{{ r.marks_obtained }}</td>
+                <td>{{ r.percentage }}%</td>
+                <td>{{ r.grade }}</td>
+                <td>{% if r.is_pass %}<span class="badge bg-success">Pass</span>{% else %}<span class="badge bg-danger">Fail</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="table-light">
+            <tr>
+                <th>Total</th>
+                <th>{{ max_marks }}</th>
+                <th>{{ total_marks }}</th>
+                <th>{{ percentage }}%</th>
+                <th colspan="2"></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="row mt-4">
+        <div class="col-4 text-center">
+            <p class="border-top pt-2">Class Teacher</p>
+        </div>
+        <div class="col-4 text-center">
+            <p class="border-top pt-2">Principal</p>
+        </div>
+        <div class="col-4 text-center">
+            <p class="border-top pt-2">Parent/Guardian</p>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+        <p class="mt-2">Select an exam to view the report card.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+@media print {
+    body { background: #fff; }
+    .navbar, .no-print, .messages { display: none !important; }
+    .report-card { box-shadow: none; padding: 1rem; }
+}
+</style>
+{% endblock %}

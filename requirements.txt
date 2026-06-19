@@ -1,0 +1,11 @@
+Django>=5.0
+django-environ
+whitenoise
+reportlab
+openpyxl
+django-crispy-forms
+crispy-bootstrap5
+pillow
+gunicorn
+psycopg2-binary
+dj-database-url
