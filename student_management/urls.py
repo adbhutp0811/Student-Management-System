@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import include, path
 from accounts.views import DashboardView
 
 urlpatterns = [
+    path('health/', lambda r: HttpResponse('ok'), name='health'),
     path('admin/', admin.site.urls),
     path('', DashboardView.as_view(), name='dashboard'),
     path('accounts/', include('accounts.urls', namespace='accounts')),

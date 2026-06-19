@@ -5,8 +5,7 @@ services:
     buildCommand: |
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
-      python manage.py migrate
-    startCommand: gunicorn student_management.wsgi:application --workers 4 --worker-class sync --timeout 120 --access-logfile - --log-level info
+    startCommand: ./render-start.sh
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
@@ -18,8 +17,6 @@ services:
         fromDatabase:
           name: student-management-db
           property: connectionString
-      - key: PYTHON_VERSION
-        value: 3.12.0
 
 databases:
   - name: student-management-db
