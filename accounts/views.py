@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, View
 from django.contrib import messages
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, IntegrityError
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from .forms import LoginForm, UserRegisterForm
@@ -19,6 +19,13 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         return reverse_lazy('dashboard')
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except OperationalError:
+            messages.error(request, 'Database not ready. Please try again.')
+            return render(request, self.template_name, self.get_context_data())
 
 
 class RegisterView(CreateView):
@@ -44,11 +51,15 @@ class StudentLoginView(View):
         roll_number = request.POST.get('roll_number', '').strip()
         date_of_birth = request.POST.get('date_of_birth', '').strip()
         try:
-            student = Student.objects.get(
-                roll_number=roll_number,
-                date_of_birth=date_of_birth,
-                is_deleted=False
-            )
+            try:
+                student = Student.objects.get(
+                    roll_number=roll_number,
+                    date_of_birth=date_of_birth,
+                    is_deleted=False
+                )
+            except OperationalError:
+                messages.error(request, 'Database not ready. Please try again.')
+                return render(request, self.template_name)
             request.session['student_id'] = student.id
             request.session['student_name'] = student.full_name
             messages.success(request, f'Welcome, {student.full_name}!')
