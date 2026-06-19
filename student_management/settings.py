@@ -72,10 +72,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'student_management.wsgi.application'
 
-DATABASE_URL = env('DATABASE_URL')
-if DATABASE_URL:
+import os as _os
+_db_url = _os.environ.get('DATABASE_URL') or env('DATABASE_URL')
+if _db_url:
     import dj_database_url
-    DATABASES = {'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)}
+    DATABASES = {'default': dj_database_url.config(default=_db_url, conn_max_age=600)}
 elif env('DJANGO_DB_ENGINE', default='sqlite') == 'mysql':
     DATABASES = {
         'default': {

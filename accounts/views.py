@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, View
 from django.contrib import messages
+from django.db.utils import OperationalError
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from .forms import LoginForm, UserRegisterForm
@@ -148,14 +149,22 @@ class DashboardView(TemplateView):
         from attendance.models import Attendance
         from django.utils import timezone
         today = timezone.localdate()
-        total_students = Student.objects.filter(is_deleted=False).count()
-        today_records = Attendance.objects.filter(date=today)
-        today_total = today_records.count()
-        today_present = today_records.filter(status='present').count()
-        context['total_students'] = total_students
-        context['today_attendance_pct'] = round((today_present / today_total * 100)) if today_total else 0
-        context['today_total_attendance'] = today_total
-        context['today_present'] = today_present
-        context['classes_count'] = Class.objects.count()
-        context['exams_count'] = Exam.objects.count()
+        try:
+            total_students = Student.objects.filter(is_deleted=False).count()
+            today_records = Attendance.objects.filter(date=today)
+            today_total = today_records.count()
+            today_present = today_records.filter(status='present').count()
+            context['total_students'] = total_students
+            context['today_attendance_pct'] = round((today_present / today_total * 100)) if today_total else 0
+            context['today_total_attendance'] = today_total
+            context['today_present'] = today_present
+            context['classes_count'] = Class.objects.count()
+            context['exams_count'] = Exam.objects.count()
+        except OperationalError:
+            context['total_students'] = 0
+            context['today_attendance_pct'] = 0
+            context['today_total_attendance'] = 0
+            context['today_present'] = 0
+            context['classes_count'] = 0
+            context['exams_count'] = 0
         return context
