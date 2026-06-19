@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, View
 from django.contrib import messages
-from django.db.utils import OperationalError, IntegrityError
+from django.db.utils import OperationalError
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from .forms import LoginForm, UserRegisterForm
