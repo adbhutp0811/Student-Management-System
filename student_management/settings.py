@@ -17,7 +17,7 @@ environ.Env.read_env(BASE_DIR / '.env')
 SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DJANGO_DEBUG')
 ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS').split(',')
-CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com', 'https://*.app']
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = not DEBUG
@@ -94,6 +94,17 @@ elif env('DJANGO_DB_ENGINE', default='sqlite') == 'mysql':
                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
                 'charset': 'utf8mb4',
             },
+        }
+    }
+elif env('DJANGO_DB_ENGINE', default='sqlite') == 'postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT', default='5432'),
         }
     }
 else:

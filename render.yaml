@@ -6,7 +6,7 @@ services:
       pip install -r requirements.txt
       python manage.py migrate --noinput
       python manage.py collectstatic --noinput
-    startCommand: python manage.py migrate --noinput; exec gunicorn student_management.wsgi:application --workers 2 --worker-class sync --timeout 120 --access-logfile - --log-level info
+    startCommand: gunicorn student_management.wsgi:application --workers 2 --worker-class sync --timeout 120 --access-logfile - --log-level info
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
@@ -15,15 +15,14 @@ services:
       - key: DJANGO_ALLOWED_HOSTS
         value: .onrender.com,localhost,127.0.0.1
       - key: DATABASE_URL
-        value: postgresql://miraclead:k8yIthsq183geV9JQNzUE6DIdi9zNIgy@dpg-d8q0r0j7uimc73dr4tq0-a/chatting_v2fc
+        value: postgresql://student_by62_user:sAptb2lyFAlL0RNIcPdDCUbXEgY74fQa@dpg-d8r07jegvqtc73ebmm9g-a.oregon-postgres.render.com/student_by62
       - key: PGHOST
-        value: dpg-d8q0r0j7uimc73dr4tq0-a
+        value: dpg-d8r07jegvqtc73ebmm9g-a.oregon-postgres.render.com
       - key: PGPORT
         value: '5432'
       - key: PGDATABASE
-        value: chatting_v2fc
+        value: student_by62
       - key: PGUSER
-        value: miraclead
+        value: student_by62_user
       - key: PGPASSWORD
-        value: k8yIthsq183geV9JQNzUE6DIdi9zNIgy
-
+        value: sAptb2lyFAlL0RNIcPdDCUbXEgY74fQa
