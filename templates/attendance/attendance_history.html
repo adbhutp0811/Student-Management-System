@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Attendance History{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-clock-history"></i> Attendance History</h4>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form class="row g-2 mb-3" method="get">
+            <div class="col-md-3">
+                <select name="class" class="form-select">
+                    <option value="">All Branches</option>
+                    {% for c in classes %}
+                    <option value="{{ c.id }}" {% if current_class == c.id|stringformat:"s" %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="student_id" class="form-select">
+                    <option value="">All Students</option>
+                    {% for s in students %}
+                    <option value="{{ s.id }}" {% if current_student == s.id|stringformat:"s" %}selected{% endif %}>{{ s.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="month" name="month" class="form-control" value="{{ current_month }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel"></i> Filter</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Student</th>
+                        <th>Branch</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in records %}
+                    <tr>
+                        <td>{{ r.date }}</td>
+                        <td>{{ r.student.full_name }}</td>
+                        <td>{{ r.student_class }}</td>
+                        <td><span class="badge badge-{{ r.status }}">{{ r.get_status_display }}</span></td>
+                        <td>{{ r.remarks|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No attendance records found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1{% if current_class %}&class={{ current_class }}{% endif %}">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_class %}&class={{ current_class }}{% endif %}">{{ page_obj.previous_page_number }}</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_class %}&class={{ current_class }}{% endif %}">{{ page_obj.next_page_number }}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if current_class %}&class={{ current_class }}{% endif %}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Manage Results{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Manage Results</h4>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row g-2 mb-4">
+            <div class="col-md-3">
+                <label class="form-label">Branch</label>
+                <select id="classSelect" class="form-select">
+                    <option value="">Select Branch</option>
+                    {% for c in classes %}
+                    <option value="{{ c.id }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Exam</label>
+                <select id="examSelect" class="form-select" disabled>
+                    <option value="">Select Exam</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Subject</label>
+                <select id="subjectSelect" class="form-select" disabled>
+                    <option value="">Select Subject</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <button id="loadResultsBtn" class="btn btn-primary w-100" disabled><i class="bi bi-search"></i> Load</button>
+            </div>
+        </div>
+
+        <form id="resultsForm" method="post" action="{% url 'results:save' %}">
+            {% csrf_token %}
+            <input type="hidden" name="exam" id="examIdInput">
+            <input type="hidden" name="subject" id="subjectIdInput">
+            <div id="marksContainer" class="table-responsive"></div>
+            <div id="submitSection" class="mt-3" style="display:none;">
+                <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Save Results</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var GRADE_CHOICES = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'F'];
+
+function calcGrade(marks, maxM) {
+    var p = marks / maxM * 100;
+    if (p >= 90) return 'A+'; if (p >= 80) return 'A'; if (p >= 70) return 'B+';
+    if (p >= 60) return 'B'; if (p >= 50) return 'C+'; if (p >= 40) return 'C';
+    if (p >= 33) return 'D'; return 'F';
+}
+
+function gradeSelectHtml(val, isAuto) {
+    var h = '<select name="grade_" class="form-select form-select-sm grade-select" style="min-width:80px;"><option value="">Auto</option>';
+    GRADE_CHOICES.forEach(function(g) { h += '<option value="' + g + '"' + (val === g && !isAuto ? ' selected' : '') + '>' + g + '</option>'; });
+    return h + '</select>';
+}
+
+$(document).ready(function() {
+    $('#classSelect').change(function() {
+        var cid = $(this).val();
+        $('#examSelect, #subjectSelect').prop('disabled', true).html('<option value="">Select</option>');
+        $('#loadResultsBtn').prop('disabled', true);
+        if (!cid) return;
+        $.get('{% url "results:get_data" %}', {class_id: cid}, function(d) {
+            var eo = '<option value="">Select Exam</option>'; $.each(d.exams, function(i, e) { eo += '<option value="' + e.id + '">' + e.name + ' (' + e.exam_type + ')</option>'; });
+            $('#examSelect').html(eo).prop('disabled', false);
+            var so = '<option value="">Select Subject</option>'; $.each(d.subjects, function(i, s) { so += '<option value="' + s.id + '" data-max="' + s.max_marks + '">' + s.name + ' (Max: ' + s.max_marks + ')</option>'; });
+            $('#subjectSelect').html(so).prop('disabled', false);
+        });
+    });
+
+    $('#examSelect, #subjectSelect').change(function() {
+        $('#loadResultsBtn').prop('disabled', !($('#examSelect').val() && $('#subjectSelect').val()));
+    });
+
+    $('#loadResultsBtn').click(function() {
+        var cid = $('#classSelect').val(), eid = $('#examSelect').val(), sid = $('#subjectSelect').val();
+        $('#examIdInput').val(eid); $('#subjectIdInput').val(sid);
+        $('#marksContainer').empty(); $('#submitSection').hide();
+        var maxMarks = parseInt($('#subjectSelect option:selected').data('max')) || 100;
+
+        Promise.all([
+            $.get('{% url "results:get_data" %}', {class_id: cid, exam_id: eid, subject_id: sid}),
+            $.get('/students/api/students/?class=' + cid)
+        ]).then(function(responses) {
+            var apiData = responses[0], studentsData = responses[1];
+            var resultsMap = {};
+            if (apiData.results) { apiData.results.forEach(function(r) { resultsMap[r.student_id] = r; }); }
+            var h = '<table class="table table-hover"><thead><tr><th>Student</th><th>Roll</th><th>Marks (Max: ' + maxMarks + ')</th><th>Grade</th><th>Auto</th></tr></thead><tbody>';
+            $.each(studentsData.students || [], function(i, s) {
+                var r = resultsMap[s.id] || {};
+                var m = r.marks_obtained !== undefined ? r.marks_obtained : '';
+                var g = r.grade || '';
+                var ga = r.grade_auto !== undefined ? r.grade_auto : true;
+                var gradeSelHtml = '<select name="grade_' + s.id + '" class="form-select form-select-sm grade-select" style="min-width:80px;"><option value="">Auto</option>';
+                GRADE_CHOICES.forEach(function(gv) { gradeSelHtml += '<option value="' + gv + '"' + (g === gv && !ga ? ' selected' : '') + '>' + gv + '</option>'; });
+                gradeSelHtml += '</select>';
+                h += '<tr><td>' + s.name + '</td><td>' + s.roll + '</td>';
+                h += '<td><input type="number" name="marks_' + s.id + '" value="' + m + '" class="form-control form-control-sm marks-input" min="0" max="' + maxMarks + '" step="0.5" data-sid="' + s.id + '" data-max="' + maxMarks + '"></td>';
+                h += '<td>' + gradeSelHtml + '</td>';
+                h += '<td><input type="checkbox" name="grade_auto_' + s.id + '" class="grade-auto-cb" data-sid="' + s.id + '"' + (ga ? ' checked' : '') + '></td></tr>';
+            });
+            h += '</tbody></table>';
+            $('#marksContainer').html(h);
+            $('#submitSection').show();
+        });
+    });
+
+    $(document).on('input', '.marks-input', function() {
+        var sid = $(this).data('sid'), marks = parseFloat($(this).val()), maxM = parseFloat($(this).data('max'));
+        var cb = $('input[name="grade_auto_' + sid + '"]'), sel = $('select[name="grade_' + sid + '"]');
+        if (cb.prop('checked') && !isNaN(marks) && !isNaN(maxM) && maxM > 0) { sel.val(calcGrade(marks, maxM)); }
+    });
+
+    $(document).on('change', '.grade-select', function() {
+        var sid = $(this).attr('name').replace('grade_', '');
+        $('input[name="grade_auto_' + sid + '"]').prop('checked', $(this).val() === '');
+    });
+
+    $(document).on('change', '.grade-auto-cb', function() {
+        var sid = $(this).data('sid'), marks = parseFloat($('input[name="marks_' + sid + '"]').val()), maxM = parseFloat($('input[name="marks_' + sid + '"]').data('max'));
+        var sel = $('select[name="grade_' + sid + '"]');
+        if ($(this).prop('checked') && !isNaN(marks) && !isNaN(maxM) && maxM > 0) { sel.val(calcGrade(marks, maxM)); }
+        else if ($(this).prop('checked')) { sel.val(''); }
+    });
+});
+</script>
+{% endblock %}

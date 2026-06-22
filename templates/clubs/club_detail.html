@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ club.name }} - Clubs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif;}
+        :root{--primary:#0b1d3a;--accent:#f0a500;}
+        .page-header{background:linear-gradient(135deg,#0b1d3a,#1a3a6b);color:#fff;padding:50px 0 40px;position:relative;overflow:hidden;}
+        .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
+        .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
+        .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+        .info-label{font-size:0.8rem;color:#888;text-transform:uppercase;letter-spacing:0.5px;}
+    </style>
+</head>
+<body>
+<nav style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container d-flex justify-content-between align-items-center" style="padding:8px 0;">
+        <a href="/" style="font-weight:800;color:var(--primary);text-decoration:none;font-size:1.1rem;"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'clubs:club_list' %}" class="nav-link-main d-inline-block">Clubs</a></div>
+    </div>
+</nav>
+
+{% if messages %}
+<div class="container mt-3">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="page-header">
+    <div class="container text-center">
+        {% if club.image %}
+        <img src="{{ club.image.url }}" alt="{{ club.name }}" class="rounded-circle mx-auto mb-3" style="width:100px;height:100px;object-fit:cover;border:3px solid var(--accent);">
+        {% else %}
+        <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:100px;height:100px;font-size:2.5rem;border:3px solid var(--accent);">{{ club.name|first }}</div>
+        {% endif %}
+        <h1 class="fw-bold display-5">{{ club.name }}</h1>
+        <p class="mb-0 opacity-75">{{ club.category }}</p>
+    </div>
+</div>
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-info-circle me-2" style="color:var(--accent);"></i>About</h5>
+                    <p>{{ club.description|linebreaks }}</p>
+                </div>
+            </div>
+
+            {% if coordinators %}
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-people-fill me-2" style="color:var(--accent);"></i>Coordinators</h5>
+                    <div class="row g-3">
+                        {% for c in coordinators %}
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-3 p-3 rounded" style="background:#f8f9fa;">
+                                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width:50px;height:50px;font-size:1.1rem;">{{ c.name|first }}</div>
+                                <div>
+                                    <strong class="small">{{ c.name }}</strong>
+                                    {% if c.is_chief %}<span class="badge bg-warning text-dark ms-1" style="font-size:0.65rem;">Chief</span>{% endif %}
+                                    <br><span class="text-muted" style="font-size:0.75rem;">{{ c.designation }}</span>
+                                    {% if c.qualification %}<br><span style="font-size:0.7rem;color:#888;">{{ c.qualification }}</span>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-box-arrow-in-right me-2" style="color:var(--accent);"></i>Apply for Membership</h5>
+
+                    {% if is_member %}
+                        <div class="alert alert-success">You are a member of this club.</div>
+                    {% elif has_applied and app_status == 'pending' %}
+                        <div class="alert alert-warning"><i class="bi bi-hourglass-split me-2"></i>Your application is pending. Wait for approval.</div>
+                    {% elif has_applied and app_status == 'rejected' %}
+                        <div class="alert alert-danger"><i class="bi bi-x-circle me-2"></i>Your application was rejected. Contact the club coordinator.</div>
+                    {% else %}
+                    <form method="post" action="{% url 'clubs:club_apply' club.pk %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" name="roll_number" class="form-control" placeholder="Enter your Roll Number" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" name="email" class="form-control" placeholder="Enter your Email" required>
+                            </div>
+                            <div class="col-md-12">
+                                <textarea name="reason" class="form-control" rows="3" placeholder="Why do you want to join this club? (optional)"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i>Submit Application</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if club.events.exists %}
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-calendar-event me-2" style="color:var(--accent);"></i>Upcoming Events</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for e in club.events.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span><strong>{{ e.title }}</strong><br><small class="text-muted">{{ e.date|date:"d M Y, h:i A" }}</small></span>
+                            <span class="badge bg-secondary">{{ e.venue }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-people me-2" style="color:var(--accent);"></i>Members ({{ member_count }})</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for m in club.memberships.all %}
+                        <li class="list-group-item d-flex align-items-center gap-2">
+                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:35px;height:35px;font-size:0.8rem;">{{ m.student.first_name|first }}</div>
+                            <div>
+                                <strong class="small">{{ m.student.full_name }}</strong><br>
+                                <span class="text-muted" style="font-size:0.7rem;">{{ m.get_role_display }}</span>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-muted small">No members yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm mt-3">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i>Applications</h5>
+                    <p class="small text-muted mb-0">Pending: <strong>{{ pending_apps }}</strong></p>
+                    <p class="small text-muted mb-0">Total: <strong>{{ club.applications.count }}</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'clubs:club_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Clubs</a>
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

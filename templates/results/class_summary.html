@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Branch Result Summary{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Branch Result Summary</h4>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form class="row g-2 mb-3" method="get">
+            <div class="col-md-4">
+                <select name="class" class="form-select" required>
+                    <option value="">Select Branch</option>
+                    {% for c in classes %}
+                    <option value="{{ c.id }}" {% if current_class == c.id|stringformat:"s" %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select name="exam" class="form-select" required>
+                    <option value="">Select Exam</option>
+                    {% for e in exams %}
+                    <option value="{{ e.id }}" {% if current_exam == e.id|stringformat:"s" %}selected{% endif %}>{{ e.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel"></i> Generate</button>
+            </div>
+        </form>
+
+        {% if summary %}
+        <div class="d-flex gap-3 mb-3">
+            <span class="badge bg-success fs-6">Passed: {{ passed }}</span>
+            <span class="badge bg-danger fs-6">Failed: {{ failed_count }} ({{ failed_percent }}%)</span>
+            <span class="badge bg-primary fs-6">Total: {{ summary|length }}</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="summaryTable">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student</th>
+                        <th>Roll</th>
+                        {% for sub in subjects %}
+                        <th>{{ sub.name }}</th>
+                        {% endfor %}
+                        <th>Total</th>
+                        <th>SGPA</th>
+                        <th>Grade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in summary %}
+                    <tr class="{% if s.failed %}table-danger{% endif %}">
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'results:report_card' s.student.pk %}?exam={{ current_exam }}">{{ s.student.full_name }}</a></td>
+                        <td>{{ s.student.roll_number }}</td>
+                        {% for sub in subjects %}
+                        <td>
+                            {% for r in s.results %}
+                            {% if r.subject_id == sub.id %}
+                            {{ r.marks_obtained }}
+                            {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% endfor %}
+                        <td><strong>{{ s.total_marks }}/{{ s.max_marks }}</strong></td>
+                        <td>{{ s.sgpa }}</td>
+                        <td><span class="badge bg-{% if s.grade == 'F' %}danger{% elif s.sgpa >= 7 %}success{% else %}warning{% endif %}">{{ s.grade }}</span></td>
+                        <td>{% if s.failed %}<span class="badge bg-danger">Fail</span>{% else %}<span class="badge bg-success">Pass</span>{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-outline-secondary no-print" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

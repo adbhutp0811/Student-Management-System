@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admissions - Miracle Institute of Technology</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f8f9fc; }
+        :root { --primary: #0b1d3a; --accent: #f0a500; }
+        .page-header { background: linear-gradient(135deg, #0b1d3a, #1a3a6b); color: #fff; padding: 50px 0 40px; position: relative; overflow: hidden; }
+        .page-header-bg { position:absolute;inset:0;background:url(https://picsum.photos/seed/admissions/1600/400) center/cover;opacity:0.15;}
+        .page-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent), #ff6b35); }
+        .content-card { border: none; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+        .step-card { border: none; border-left: 4px solid var(--accent); border-radius: 12px; padding: 1.5rem; background: #fff; margin-bottom: 1rem; transition: all 0.2s; }
+        .step-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateX(4px); }
+        .step-num { width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0; }
+        .fee-card { border: none; border-radius: 14px; padding: 1.5rem; background: #fff; height: 100%; transition: all 0.2s; }
+        .fee-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .contact-info { background: var(--primary); border-radius: 16px; padding: 2rem; color: rgba(255,255,255,0.85); }
+        .btn-gold { background: linear-gradient(135deg, var(--accent), #ff8c00); border: none; color: #fff; padding: 12px 30px; font-weight: 700; border-radius: 10px; transition: all 0.3s; }
+        .btn-gold:hover { background: linear-gradient(135deg, #d49100, #e67e00); color: #fff; transform: translateY(-2px); }
+        .nav-link-main { color: #333 !important; font-weight: 500; padding: 1.2rem 0.9rem !important; font-size: 0.88rem; transition: all 0.2s; border-bottom: 3px solid transparent; }
+        .nav-link-main:hover, .nav-link-main.active { color: var(--primary) !important; border-bottom-color: var(--accent); }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg" style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/" style="color:var(--primary);"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link nav-link-main" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link nav-link-main active" href="#">Admissions</a></li>
+            <li class="nav-item"><a class="nav-link nav-link-main" href="{% url 'accounts:result_portal' %}">Result Portal</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="page-header">
+    <div class="page-header-bg"></div>
+    <div class="container text-center position-relative">
+        <h1 class="fw-bold display-5">Admissions 2026-27</h1>
+        <p class="mb-0 opacity-75">Begin your journey at Miracle Institute of Technology</p>
+    </div>
+</div>
+</div>
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-8">
+            <h2 class="fw-bold" style="color:var(--primary);">Eligibility Criteria</h2>
+            <div class="card content-card p-4 mt-3">
+                <ul class="list-unstyled mb-0" style="line-height:2;">
+                    <li><i class="bi bi-check-circle-fill me-2" style="color:var(--accent);"></i> Passed 10+2 with Physics, Chemistry &amp; Mathematics from a recognized board.</li>
+                    <li><i class="bi bi-check-circle-fill me-2" style="color:var(--accent);"></i> Minimum 60% aggregate in PCM (45% for reserved categories).</li>
+                    <li><i class="bi bi-check-circle-fill me-2" style="color:var(--accent);"></i> Valid score in JEE Main / UPCET / State Entrance Examination.</li>
+                    <li><i class="bi bi-check-circle-fill me-2" style="color:var(--accent);"></i> Candidates must be physically and mentally fit for the program.</li>
+                </ul>
+            </div>
+
+            <h2 class="fw-bold mt-5" style="color:var(--primary);">Admission Process</h2>
+            <div class="mt-3">
+                <div class="step-card d-flex gap-3 align-items-start">
+                    <div class="step-num">1</div>
+                    <div><h6 class="fw-bold mb-1">Apply Online</h6><p class="text-muted small mb-0">Fill the online application form on the AKTU/UPCET portal or institute website.</p></div>
+                </div>
+                <div class="step-card d-flex gap-3 align-items-start">
+                    <div class="step-num">2</div>
+                    <div><h6 class="fw-bold mb-1">Counseling Registration</h6><p class="text-muted small mb-0">Register for UP State Counseling based on your JEE/UPCET rank.</p></div>
+                </div>
+                <div class="step-card d-flex gap-3 align-items-start">
+                    <div class="step-num">3</div>
+                    <div><h6 class="fw-bold mb-1">Document Verification</h6><p class="text-muted small mb-0">Submit original documents for verification at the institute.</p></div>
+                </div>
+                <div class="step-card d-flex gap-3 align-items-start">
+                    <div class="step-num">4</div>
+                    <div><h6 class="fw-bold mb-1">Fee Payment</h6><p class="text-muted small mb-0">Pay the admission fee to confirm your seat.</p></div>
+                </div>
+                <div class="step-card d-flex gap-3 align-items-start">
+                    <div class="step-num">5</div>
+                    <div><h6 class="fw-bold mb-1">Orientation &amp; Classes</h6><p class="text-muted small mb-0">Attend the induction program and begin your academic journey.</p></div>
+                </div>
+            </div>
+
+            <h2 class="fw-bold mt-5" style="color:var(--primary);">Documents Required</h2>
+            <div class="card content-card p-4 mt-3">
+                <div class="row g-3">
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> 10th Marksheet &amp; Certificate</div>
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> 12th Marksheet &amp; Certificate</div>
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> JEE/UPCET Score Card</div>
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> Transfer Certificate (TC)</div>
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> Character Certificate</div>
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> Category Certificate (if applicable)</div>
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> Domicile Certificate</div>
+                    <div class="col-md-6"><i class="bi bi-file-text me-2" style="color:var(--accent);"></i> Passport Size Photographs (6 copies)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="contact-info">
+                <h5 class="fw-bold text-white mb-3"><i class="bi bi-telephone-fill me-2"></i> Admission Helpdesk</h5>
+                <p class="small"><i class="bi bi-telephone me-2"></i> +91-512-2550123 (Ext. 101)</p>
+                <p class="small"><i class="bi bi-envelope me-2"></i> admissions@miracle.ac.in</p>
+                <p class="small"><i class="bi bi-clock me-2"></i> Mon-Sat: 9:00 AM - 5:00 PM</p>
+                <hr style="border-color:rgba(255,255,255,0.2);">
+                <h6 class="text-white fw-bold">Important Dates</h6>
+                <p class="small mb-1">Application Start: <strong>March 1, 2026</strong></p>
+                <p class="small mb-1">Last Date: <strong>June 30, 2026</strong></p>
+                <p class="small mb-0">Counseling: <strong>July 2026</strong></p>
+            </div>
+            <div class="card content-card p-4 mt-4">
+                <h5 class="fw-bold" style="color:var(--primary);">Programs &amp; Intake</h5>
+                <ul class="list-unstyled small mb-0" style="line-height:2.2;">
+                    <li><strong>TT</strong> - 60 Seats</li>
+                    <li><strong>TC</strong> - 60 Seats</li>
+                    <li><strong>MMFT</strong> - 60 Seats</li>
+                    <li><strong>ME</strong> - 60 Seats</li>
+                    <li><strong>ECE</strong> - 60 Seats</li>
+                    <li><strong>CSE</strong> - 60 Seats</li>
+                </ul>
+            </div>
+            <div class="card content-card p-4 mt-4">
+                <h5 class="fw-bold" style="color:var(--primary);">Quick Links</h5>
+                <ul class="list-unstyled small mb-0" style="line-height:2.2;">
+                    <li><a href="/" style="color:#0b1d3a;text-decoration:none;">&#8594; Institute Home</a></li>
+                    <li><a href="{% url 'accounts:result_portal' %}" style="color:#0b1d3a;text-decoration:none;">&#8594; Result Portal</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:40px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

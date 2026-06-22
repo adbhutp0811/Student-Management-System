@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Monthly Attendance Summary{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-bar-chart-fill"></i> Monthly Attendance Summary</h4>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form class="row g-2 mb-3" method="get">
+            <div class="col-md-4">
+                <select name="class" class="form-select">
+                    <option value="">All Branches</option>
+                    {% for c in classes %}
+                    <option value="{{ c.id }}" {% if current_class == c.id|stringformat:"s" %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="month" name="month" class="form-control" value="{{ current_month }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel"></i> View</button>
+            </div>
+        </form>
+
+        {% if summary %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Roll</th>
+                        <th>Total</th>
+                        <th class="text-success">Present</th>
+                        <th class="text-danger">Absent</th>
+                        <th class="text-warning">Late</th>
+                        <th class="text-info">Leave</th>
+                        <th>%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in summary %}
+                    <tr>
+                        <td>{{ s.student.full_name }}</td>
+                        <td>{{ s.student.roll_number }}</td>
+                        <td>{{ s.total }}</td>
+                        <td class="text-success">{{ s.present }}</td>
+                        <td class="text-danger">{{ s.absent }}</td>
+                        <td class="text-warning">{{ s.late }}</td>
+                        <td class="text-info">{{ s.leave }}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress" style="width: 80px; height: 8px;">
+                                    <div class="progress-bar {% if s.percentage >= 75 %}bg-success{% elif s.percentage >= 50 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         style="width: {{ s.percentage }}%"></div>
+                                </div>
+                                <span class="small">{{ s.percentage }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-4">Select filters to view attendance summary.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

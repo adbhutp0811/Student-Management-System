@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Report Card - {{ student.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <h4 class="mb-0"><i class="bi bi-card-text"></i> Report Card</h4>
+    <div>
+        <select id="semSelect" class="form-select d-inline-block w-auto" onchange="window.location.href='?sem='+this.value">
+            {% for s in semesters %}
+            <option value="{{ s }}" {% if selected_sem == s %}selected{% endif %}>Semester {{ s }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+    </div>
+</div>
+
+{% if exam_groups %}
+<div class="report-card">
+    <div class="text-center mb-4">
+        <img src="{% static 'images/college-logo.png' %}" alt="College Logo" style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin-bottom:8px;">
+        <h3>Miracle Institute of Technology, Kanpur</h3>
+        <h5>Report Card</h5>
+        <p class="text-muted">{{ student.student_class }}</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-6">
+            <table class="table table-sm table-borderless">
+                <tr><th>Student Name:</th><td>{{ student.full_name }}</td></tr>
+                <tr><th>Roll Number:</th><td>{{ student.roll_number }}</td></tr>
+                <tr><th>Branch:</th><td>{{ student.student_class }}</td></tr>
+            </table>
+        </div>
+        <div class="col-6 text-end">
+            <table class="table table-sm table-borderless">
+                <tr><th>Date of Birth:</th><td>{{ student.date_of_birth }}</td></tr>
+                <tr><th>Gender:</th><td>{{ student.get_gender_display }}</td></tr>
+                <tr><th>Father's Name:</th><td>{{ student.father_name }}</td></tr>
+                <tr><th>Mother's Name:</th><td>{{ student.mother_name }}</td></tr>
+            </table>
+        </div>
+    </div>
+
+    {% for exam, result_list in exam_groups.items %}
+    <h6 class="mt-4 mb-2">{{ exam.name }} <small class="text-muted">({{ exam.get_exam_type_display }}) - {{ exam.academic_year }}</small></h6>
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>S.No</th>
+                <th>Subject Code</th>
+                <th>Subject Name</th>
+                <th>Type</th>
+                <th>M.M.</th>
+                <th>Internal</th>
+                <th>External</th>
+                <th>Total</th>
+                <th>Grade</th>
+                <th>Credit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in result_list %}
+            {% if r.is_total_row %}
+            <tr class="table-light fw-bold">
+                <td colspan="4">Total</td>
+                <td>{{ r.total_max }}</td>
+                <td></td>
+                <td></td>
+                <td>{{ r.total_obtained }}</td>
+                <td>SGPA: {{ r.sgpa }}</td>
+                <td>{{ r.total_credits }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ r.subject.code }}</td>
+                <td>{{ r.subject.name }}</td>
+                <td>{% if r.subject.is_lab %}PRACTICAL{% else %}THEORY{% endif %}</td>
+                <td>{{ r.subject.max_marks }}</td>
+                <td>{{ r.internal_marks|floatformat:0 }}</td>
+                <td>{{ r.external_marks|floatformat:0 }}</td>
+                <td>{{ r.total_marks|floatformat:0 }}</td>
+                <td>{{ r.grade }}</td>
+                <td>{{ r.subject.credits }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+
+    <div class="row mt-4">
+        <div class="col-4 text-center">
+            {% load static %}
+            <img src="{% static 'images/teacher-signature.svg' %}" alt="HOD Signature" style="height:40px;margin-bottom:4px;">
+            <p class="border-top pt-1 mb-1 small">({% if student.student_class.name == 'CSE' %}Dr. I.P. Mishra{% else %}Dr. Alok Kumar{% endif %})</p>
+            <p class="small text-muted">HOD</p>
+        </div>
+        <div class="col-4 text-center">
+            <img src="{% static 'images/principal-signature.svg' %}" alt="Director Signature" style="height:40px;margin-bottom:4px;">
+            <p class="border-top pt-1 mb-1 small">(Dr. G. Nalankilli)</p>
+            <p class="small text-muted">Director</p>
+        </div>
+        <div class="col-4 text-center">
+            <img src="{% static 'images/guardian-signature.svg' %}" alt="COE Signature" style="height:40px;margin-bottom:4px;">
+            <p class="border-top pt-1 mb-1 small">(Dr. Rajendra Prasad)</p>
+            <p class="small text-muted">COE</p>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center text-muted py-5">
+        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+        <p class="mt-2">No exam results found.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+@media print {
+    body { background: #fff; }
+    .navbar, .no-print, .messages { display: none !important; }
+    .report-card { box-shadow: none; padding: 1rem; }
+}
+</style>
+{% endblock %}

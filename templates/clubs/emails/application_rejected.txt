@@ -1,0 +1,8 @@
+Dear {{ student.full_name }},
+
+Thank you for your interest in joining "{{ club.name }}".
+
+After careful review, we regret to inform you that your application has not been approved at this time. You may contact the club coordinator for more information.
+
+Best regards,
+Miracle Institute of Technology

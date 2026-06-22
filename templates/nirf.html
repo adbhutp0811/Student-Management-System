@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIRF - Miracle Institute of Technology</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif;}
+        :root{--primary:#0b1d3a;--accent:#f0a500;}
+        .page-header{background:linear-gradient(135deg,#0b1d3a,#1a3a6b);color:#fff;padding:50px 0 40px;position:relative;overflow:hidden;}
+        .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
+        .score-card{border:none;border-radius:16px;padding:2rem;background:#fff;height:100%;transition:all 0.2s;text-align:center;}
+        .score-card:hover{box-shadow:0 6px 25px rgba(0,0,0,0.08);transform:translateY(-3px);}
+        .score-value{font-size:2.8rem;font-weight:900;color:var(--accent);line-height:1.2;}
+        .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
+        .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+    </style>
+</head>
+<body>
+<nav style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container d-flex justify-content-between align-items-center" style="padding:8px 0;">
+        <a href="/" style="font-weight:800;color:var(--primary);text-decoration:none;font-size:1.1rem;"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'accounts:result_portal' %}" class="nav-link-main d-inline-block">Result Portal</a></div>
+    </div>
+</nav>
+<div class="page-header">
+    <div class="container text-center">
+        <h1 class="fw-bold display-5">NIRF Rankings</h1>
+        <p class="mb-0 opacity-75">National Institutional Ranking Framework - Performance Data</p>
+    </div>
+</div>
+<div class="container py-5">
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-6"><div class="card score-card shadow-sm"><div class="score-value">151-200</div><p class="text-muted small mb-0 mt-2">Engineering Band</p></div></div>
+        <div class="col-md-3 col-6"><div class="card score-card shadow-sm"><div class="score-value">85+</div><p class="text-muted small mb-0 mt-2">Overall Score</p></div></div>
+        <div class="col-md-3 col-6"><div class="card score-card shadow-sm"><div class="score-value">2025</div><p class="text-muted small mb-0 mt-2">Last Participated</p></div></div>
+        <div class="col-md-3 col-6"><div class="card score-card shadow-sm"><div class="score-value">A+</div><p class="text-muted small mb-0 mt-2">NAAC Grade</p></div></div>
+    </div>
+    <div class="card" style="border:none;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+        <div class="card-body p-4">
+            <h5 class="fw-bold" style="color:var(--primary);">NIRF Parameters - Performance Summary</h5>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered">
+                    <thead class="table-light"><tr><th>Parameter</th><th>Marks</th><th>Details</th></tr></thead>
+                    <tbody>
+                        <tr><td>Teaching, Learning &amp; Resources (TLR)</td><td>75/100</td><td>High faculty-student ratio, qualified faculty, library resources</td></tr>
+                        <tr><td>Research &amp; Professional Practice (RP)</td><td>60/100</td><td>Publications, patents, funded projects, consultancy</td></tr>
+                        <tr><td>Graduation Outcomes (GO)</td><td>80/100</td><td>Placement record, higher studies, entrepreneurship</td></tr>
+                        <tr><td>Outreach &amp; Inclusivity (OI)</td><td>72/100</td><td>Student diversity, scholarships, regional outreach</td></tr>
+                        <tr><td>Perception (PR)</td><td>55/100</td><td>Peer perception, employer reputation, public perception</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-muted small mt-3 mb-0"><i class="bi bi-info-circle me-1"></i> Data as per NIRF 2025 submission. The institute is committed to continuous improvement in all parameters.</p>
+        </div>
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

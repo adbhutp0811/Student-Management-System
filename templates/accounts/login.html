@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login - Student Management System{% endblock %}
+{% block content %}
+<div class="login-page">
+    <div class="login-card card p-4 shadow">
+        <div class="text-center mb-4">
+            <i class="bi bi-mortarboard-fill text-primary" style="font-size: 3rem;"></i>
+            <h3 class="mt-2">Student Management System</h3>
+        </div>
+        <ul class="nav nav-tabs nav-justified mb-4" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staff" type="button" role="tab"><i class="bi bi-shield-lock"></i> Staff</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="student-tab" data-bs-toggle="tab" data-bs-target="#student" type="button" role="tab"><i class="bi bi-person-circle"></i> Student</button>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="staff" role="tabpanel">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100 mb-2">Sign In</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="student" role="tabpanel">
+                <p class="text-muted text-center mb-3">Login with your Roll Number and Date of Birth</p>
+                <a href="{% url 'accounts:student_login' %}" class="btn btn-success w-100">
+                    <i class="bi bi-box-arrow-in-right"></i> Go to Student Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

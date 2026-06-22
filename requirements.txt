@@ -1,0 +1,15 @@
+asgiref==3.11.1
+charset-normalizer==3.4.7
+crispy-bootstrap5==2026.3
+Django==6.0.6
+django-crispy-forms==2.6
+django-environ==0.14.0
+gunicorn==26.0.0
+mysqlclient==2.2.8
+openpyxl==3.1.5
+pillow==12.2.0
+psycopg2-binary==2.9.10
+reportlab==5.0.0
+sqlparse==0.5.5
+tzdata==2026.2
+whitenoise==6.12.0

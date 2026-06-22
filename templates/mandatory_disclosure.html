@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandatory Disclosure - Miracle Institute of Technology</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif;}
+        :root{--primary:#0b1d3a;--accent:#f0a500;}
+        .page-header{background:linear-gradient(135deg,#0b1d3a,#1a3a6b);color:#fff;padding:50px 0 40px;position:relative;overflow:hidden;}
+        .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
+        .content-card{border:none;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.05);}
+        table{font-size:0.9rem;}
+        .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
+        .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+    </style>
+</head>
+<body>
+<nav style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container d-flex justify-content-between align-items-center" style="padding:8px 0;">
+        <a href="/" style="font-weight:800;color:var(--primary);text-decoration:none;font-size:1.1rem;"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'accounts:result_portal' %}" class="nav-link-main d-inline-block">Result Portal</a></div>
+    </div>
+</nav>
+<div class="page-header">
+    <div class="container text-center">
+        <h1 class="fw-bold display-5">Mandatory Disclosure</h1>
+        <p class="mb-0 opacity-75">As per AICTE &amp; AKTU regulations</p>
+    </div>
+</div>
+<div class="container py-5">
+    <div class="card content-card p-4 mb-4">
+        <h5 class="fw-bold" style="color:var(--primary);">1. Institute Information</h5>
+        <table class="table table-borderless">
+            <tr><td style="width:200px;font-weight:600;">Name</td><td>Miracle Institute of Technology</td></tr>
+            <tr><td style="font-weight:600;">Address</td><td>GT Road, Kanpur, Uttar Pradesh - 208001</td></tr>
+            <tr><td style="font-weight:600;">Affiliation</td><td>Dr. A.P.J. Abdul Kalam Technical University (AKTU), Lucknow</td></tr>
+            <tr><td style="font-weight:600;">Approval</td><td>All India Council for Technical Education (AICTE), New Delhi</td></tr>
+            <tr><td style="font-weight:600;">Year of Establishment</td><td>2002</td></tr>
+            <tr><td style="font-weight:600;">Institute Type</td><td>Private Unaided</td></tr>
+        </table>
+    </div>
+    <div class="card content-card p-4 mb-4">
+        <h5 class="fw-bold" style="color:var(--primary);">2. Programs Offered</h5>
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr><th>Program</th><th>Intake</th><th>Duration</th><th>Year of Start</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>B.Tech Textile Technology</td><td>60</td><td>4 Years</td><td>2002</td></tr>
+                <tr><td>B.Tech Textile Chemistry</td><td>60</td><td>4 Years</td><td>2002</td></tr>
+                <tr><td>B.Tech Man-Made Fiber Tech.</td><td>60</td><td>4 Years</td><td>2002</td></tr>
+                <tr><td>B.Tech Mechanical Engineering</td><td>60</td><td>4 Years</td><td>2005</td></tr>
+                <tr><td>B.Tech Electronics &amp; Comm.</td><td>60</td><td>4 Years</td><td>2008</td></tr>
+                <tr><td>B.Tech Computer Science &amp; Eng.</td><td>60</td><td>4 Years</td><td>2010</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card content-card p-4 mb-4">
+        <h5 class="fw-bold" style="color:var(--primary);">3. Fees Structure (Per Semester)</h5>
+        <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Program</th><th>Tuition Fee</th><th>Other Fees</th><th>Total</th></tr></thead>
+            <tbody>
+                <tr><td>B.Tech (All Programs)</td><td>&#8377; 45,000</td><td>&#8377; 12,000</td><td>&#8377; 57,000</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card content-card p-4 mb-4">
+        <h5 class="fw-bold" style="color:var(--primary);">4. Faculty Details</h5>
+        <table class="table table-bordered">
+            <thead class="table-light"><tr><th>Category</th><th>Number</th></tr></thead>
+            <tbody>
+                <tr><td>Professor</td><td>12</td></tr>
+                <tr><td>Associate Professor</td><td>18</td></tr>
+                <tr><td>Assistant Professor</td><td>35</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>65</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card content-card p-4 mb-4">
+        <h5 class="fw-bold" style="color:var(--primary);">5. Infrastructure</h5>
+        <table class="table table-borderless">
+            <tr><td style="width:250px;font-weight:600;">Campus Area</td><td>25 Acres</td></tr>
+            <tr><td style="font-weight:600;">Built-up Area</td><td>85,000 sq.ft.</td></tr>
+            <tr><td style="font-weight:600;">Classrooms</td><td>40 (Smart Classrooms: 20)</td></tr>
+            <tr><td style="font-weight:600;">Laboratories</td><td>35</td></tr>
+            <tr><td style="font-weight:600;">Library</td><td>Central Library with 45,000+ books, 120+ journals</td></tr>
+            <tr><td style="font-weight:600;">Hostel Capacity</td><td>Boys: 300, Girls: 200</td></tr>
+            <tr><td style="font-weight:600;">Computer Center</td><td>10 Labs, 500+ Systems</td></tr>
+        </table>
+    </div>
+    <div class="card content-card p-4">
+        <h5 class="fw-bold" style="color:var(--primary);">6. Contact for Grievance Redressal</h5>
+        <p class="mb-1 small"><strong>Grievance Officer:</strong> Dr. Alok Kumar, Dean Academics</p>
+        <p class="mb-0 small"><strong>Email:</strong> grievance@miracle.ac.in | <strong>Phone:</strong> +91-512-2550123 (Ext. 201)</p>
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

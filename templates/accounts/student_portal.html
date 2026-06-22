@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Student Portal - {{ student.full_name }}{% endblock %}
+{% block extra_css %}
+<style>
+@media print {
+    .navbar, .no-print, footer { display: none !important; }
+    body { background: #fff; }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <h4 class="mb-0"><i class="bi bi-person-circle"></i> Student Portal</h4>
+    <div>
+        <a href="{% url 'accounts:student_logout' %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                {% if student.profile_photo %}
+                <img src="{{ student.profile_photo.url }}" class="profile-photo-lg mb-2" alt="">
+                {% else %}
+                <div class="profile-photo-lg bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="font-size: 3rem;">{{ student.first_name|first }}{{ student.last_name|first }}</div>
+                <form method="post" enctype="multipart/form-data" class="mt-2 no-print">
+                    {% csrf_token %}
+                    <input type="file" name="profile_photo" class="form-control form-control-sm mb-1" accept="image/*" required>
+                    <button type="submit" class="btn btn-sm btn-outline-success w-100"><i class="bi bi-camera"></i> Upload Photo</button>
+                </form>
+                {% endif %}
+                <h5>{{ student.full_name }}</h5>
+                <p class="text-muted mb-1">{{ student.roll_number }}</p>
+                <span class="badge bg-success">{{ department_name }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card stat-card success">
+                    <div class="card-body">
+                        <h6 class="text-muted">Attendance</h6>
+                        <h2 class="mb-0">{{ attendance_pct }}%</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card primary">
+                    <div class="card-body">
+                        <h6 class="text-muted">Results</h6>
+                        <h2 class="mb-0">{{ exam_groups|length }}</h2>
+                        <small class="text-muted">Exams attempted</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card info">
+                    <div class="card-body">
+                        <h6 class="text-muted">Branch</h6>
+                        <h2 class="mb-0">{{ department_name }}</h2>
+                        <small class="text-muted">{{ student.student_class.section }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">Personal Information</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2"><strong>Date of Birth:</strong> {{ student.date_of_birth }}</div>
+                    <div class="col-md-4 mb-2"><strong>Gender:</strong> {{ student.get_gender_display }}</div>
+                    <div class="col-md-4 mb-2"><strong>Father's Name:</strong> {{ student.father_name }}</div>
+                    <div class="col-md-4 mb-2"><strong>Mother's Name:</strong> {{ student.mother_name }}</div>
+                    <div class="col-md-4 mb-2"><strong>Contact:</strong> {{ student.contact_number }}</div>
+                    <div class="col-md-4 mb-2"><strong>Email:</strong> {{ student.email|default:"-" }}</div>
+                    <div class="col-md-4 mb-2"><strong>Admission:</strong> {{ student.admission_date }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card" id="resultsCard">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-award"></i> Results</span>
+                <div>
+                    <select id="semSelect" class="form-select form-select-sm d-inline-block w-auto no-print" onchange="window.location.href='?sem='+this.value">
+                        {% for s in semesters %}
+                        <option value="{{ s }}" {% if selected_sem == s %}selected{% endif %}>Semester {{ s }}</option>
+                        {% endfor %}
+                    </select>
+                    <button onclick="printResults()" class="btn btn-sm btn-outline-primary no-print"><i class="bi bi-printer"></i> Print</button>
+                </div>
+            </div>
+            <div class="card-body" style="max-height: 350px; overflow-y: auto;">
+                {% for exam, result_list in exam_groups.items %}
+                <h6 class="mt-2 mb-2">{{ exam.name }} <small class="text-muted">({{ exam.get_exam_type_display }})</small></h6>
+                <table class="table table-sm table-bordered mb-3">
+                    <thead><tr><th>S.No</th><th>Subject Code</th><th>Subject Name</th><th>Type</th><th>M.M.</th><th>Internal</th><th>External</th><th>Total</th><th>Grade</th><th>Credit</th></tr></thead>
+                    <tbody>
+                        {% for r in result_list %}
+                        {% if r.is_total_row %}
+                        <tr class="table-light fw-bold">
+                            <td colspan="4">Total</td>
+                            <td>{{ r.total_max }}</td>
+                            <td colspan="2"></td>
+                            <td>{{ r.total_obtained }}</td>
+                            <td>SGPA: {{ r.sgpa }}</td>
+                            <td></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ r.subject.code }}</td>
+                            <td>{{ r.subject.name }}</td>
+                            <td>{% if r.subject.is_lab %}PRACTICAL{% else %}THEORY{% endif %}</td>
+                            <td>{{ r.subject.max_marks }}</td>
+                            <td>{{ r.internal_marks|floatformat:0 }}</td>
+                            <td>{{ r.external_marks|floatformat:0 }}</td>
+                            <td>{{ r.total_marks|floatformat:0 }}</td>
+                            <td><span class="badge bg-{% if r.grade == 'F' %}danger{% elif r.grade_point >= 7 %}success{% else %}warning{% endif %}">{{ r.grade }}</span></td>
+                            <td>{{ r.subject.credits }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% empty %}
+                <p class="text-muted text-center">No results published yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function printResults() {
+    var name = '{{ student.full_name|escapejs }}';
+    var roll = '{{ student.roll_number|escapejs }}';
+    var cls = '{{ department_name|escapejs }} - {{ student.student_class.section|escapejs }}';
+    var dob = '{{ student.date_of_birth|date:"Y-m-d" }}';
+    var gender = '{{ student.get_gender_display|escapejs }}';
+    var father = '{{ student.father_name|escapejs }}';
+    var mother = '{{ student.mother_name|escapejs }}';
+    var contact = '{{ student.contact_number|escapejs }}';
+    var admission = '{{ student.admission_date|date:"Y-m-d"|escapejs }}';
+    var photo = '{% if student.profile_photo %}{{ student.profile_photo.url }}{% endif %}';
+    var initials = '{{ student.first_name|first|escapejs }}{{ student.last_name|first|escapejs }}';
+
+    var exams = [
+        {% for exam, rlist in exam_groups.items %}
+        {
+            name: '{{ exam.name|escapejs }}',
+            type: '{{ exam.get_exam_type_display|escapejs }}',
+            year: '{{ exam.academic_year|escapejs }}',
+            {% for r in rlist %}
+            {% if r.is_total_row %}
+            total_obtained: {{ r.total_obtained }},
+            total_max: {{ r.total_max }},
+            sgpa: {{ r.sgpa }},
+            {% endif %}
+            {% endfor %}
+            subjects: [
+                {% for r in rlist %}
+                {% if not r.is_total_row %}
+                { sub: '{{ r.subject.name|escapejs }}', code: '{{ r.subject.code|escapejs }}', max: {{ r.subject.max_marks }}, internal: {{ r.internal_marks|floatformat:0 }}, external: {{ r.external_marks|floatformat:0 }}, grade: '{{ r.grade }}', is_lab: {{ r.subject.is_lab|lower }}, credits: {{ r.subject.credits }} },
+                {% endif %}
+                {% endfor %}
+            ]
+        },
+        {% endfor %}
+    ];
+
+    var style = '<style>' +
+        '@page { margin: 15mm; }' +
+        'body { font-family: Arial, sans-serif; padding: 20px; color: #333; }' +
+        '.report-card { max-width: 800px; margin: 0 auto; padding: 20px; }' +
+        '.header { text-align: center; border-bottom: 3px double #0d6efd; padding-bottom: 12px; margin-bottom: 20px; }' +
+        '.header h2 { margin: 0; color: #0d6efd; }' +
+        '.header p { margin: 3px 0 0; color: #666; font-size: 13px; }' +
+        '.info { width: 100%; margin-bottom: 15px; }' +
+        '.info td { padding: 3px 10px; font-size: 13px; vertical-align: top; }' +
+        '.info .lbl { font-weight: bold; color: #555; width: 130px; }' +
+        'table.tbl { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }' +
+        'table.tbl th { background: #0d6efd; color: #fff; padding: 8px 10px; text-align: left; }' +
+        'table.tbl td { padding: 6px 10px; border-bottom: 1px solid #dee2e6; }' +
+        'table.tbl tr:nth-child(even) td { background: #f8f9fa; }' +
+        'table.tbl .total td { background: #e9ecef; font-weight: bold; border-top: 2px solid #0d6efd; }' +
+        '.signatures { display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; }' +
+        '.signatures div { text-align: center; width: 30%; }' +
+        '.signatures .line { border-top: 1px solid #333; padding-top: 5px; margin-top: 40px; }' +
+        '.footer { text-align: center; margin-top: 15px; font-size: 11px; color: #aaa; }' +
+        '.exam-title { font-size: 14px; font-weight: bold; color: #0d6efd; margin: 15px 0 5px; }' +
+        '.photo-box { text-align: right; }' +
+        '.photo-box img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #0d6efd; }' +
+        '.photo-box .initials { width: 80px; height: 80px; border-radius: 50%; background: #0d6efd; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; }' +
+        '.exam-block { page-break-inside: avoid; }' +
+        '@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }' +
+        '</style>';
+
+    var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Report Card - ' + name + '</title>' + style + '</head><body>';
+    h += '<div class="report-card">';
+    h += '<div class="header"><h2>Miracle Institute of Technology</h2><p>Report Card</p></div>';
+
+    var photoHtml = photo ? '<img src="' + photo + '" alt="Photo">' : '<div class="initials">' + initials + '</div>';
+    h += '<table class="info"><tr>';
+    h += '<td class="lbl">Student Name:</td><td>' + name + '</td>';
+    h += '<td class="lbl">Roll Number:</td><td>' + roll + '</td>';
+    h += '<td rowspan="4" class="photo-box">' + photoHtml + '</td></tr>';
+    h += '<tr><td class="lbl">Branch:</td><td>' + cls + '</td><td class="lbl">Gender:</td><td>' + gender + '</td></tr>';
+    h += '<tr><td class="lbl">Date of Birth:</td><td>' + dob + '</td><td class="lbl">Father\'s Name:</td><td>' + father + '</td></tr>';
+    h += '<tr><td colspan="2"></td><td class="lbl">Mother\'s Name:</td><td>' + mother + '</td></tr>';
+    h += '<tr><td class="lbl">Contact:</td><td>' + contact + '</td><td class="lbl">Admission:</td><td>' + admission + '</td></tr>';
+    h += '</table>';
+
+    for (var i = 0; i < exams.length; i++) {
+        var ex = exams[i];
+        h += '<div class="exam-block">';
+        h += '<div class="exam-title">' + ex.name + ' (' + ex.type + ') - ' + ex.year + '</div>';
+        h += '<table class="tbl">';
+        h += '<thead><tr><th>S.No</th><th>Code</th><th style="width:30%;">Subject</th><th>Type</th><th>M.M.</th><th>Int.</th><th>Ext.</th><th>Total</th><th>Grade</th><th>Cr.</th></tr></thead><tbody>';
+        for (var j = 0; j < ex.subjects.length; j++) {
+            var s = ex.subjects[j];
+            h += '<tr><td>' + (j + 1) + '</td><td>' + s.code + '</td><td>' + s.sub + '</td><td>' + (s.is_lab ? 'PRACTICAL' : 'THEORY') + '</td><td>' + s.max + '</td><td>' + s.internal + '</td><td>' + s.external + '</td><td>' + (parseInt(s.internal) + parseInt(s.external)) + '</td><td>' + s.grade + '</td><td>' + s.credits + '</td></tr>';
+        }
+        h += '<tr class="total"><td colspan="4">Total</td><td>' + ex.total_max + '</td><td colspan="2"></td><td>' + ex.total_obtained + '</td><td>SGPA: ' + ex.sgpa + '</td><td></td></tr>';
+        h += '</tbody></table></div>';
+    }
+
+    h += '<div class="signatures">';
+    h += '<div><div class="line">(Dr. G. Nalankilli)</div><div style="font-size:12px;color:#666;margin-top:4px;">Director</div></div>';
+    h += '<div><div class="line">(Dr. Rajendra Prasad)</div><div style="font-size:12px;color:#666;margin-top:4px;">COE</div></div>';
+    h += '<div><div class="line">(Dr. Alok Kumar)</div><div style="font-size:12px;color:#666;margin-top:4px;">HOD</div></div>';
+    h += '</div>';
+    h += '<div class="footer">This is a computer-generated report. Generated on ' + new Date().toLocaleDateString() + '.</div>';
+    h += '</div></body></html>';
+
+    var iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = 'none';
+    document.body.appendChild(iframe);
+    var doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(h);
+    doc.close();
+    setTimeout(function() { iframe.contentWindow.focus(); iframe.contentWindow.print(); }, 500);
+}
+</script>
+{% endblock %}

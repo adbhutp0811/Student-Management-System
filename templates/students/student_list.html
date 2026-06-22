@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Students - Student Management System{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-people-fill"></i> Students</h4>
+    <a href="{% url 'students:add' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Student</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form class="row g-2 mb-3" method="get">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search by name or roll number..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="class" class="form-select">
+                    <option value="">All Branches</option>
+                    {% for c in classes %}
+                    <option value="{{ c.id }}" {% if current_class == c.id|stringformat:"s" %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="gender" class="form-select">
+                    <option value="">All Gender</option>
+                    <option value="male" {% if current_gender == 'male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if current_gender == 'female' %}selected{% endif %}>Female</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel"></i> Filter</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Branch</th>
+                        <th>Gender</th>
+                        <th>Contact</th>
+                        <th>Father's Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>
+                            {% if student.profile_photo %}
+                            <img src="{{ student.profile_photo.url }}" class="profile-photo" alt="">
+                            {% else %}
+                            <div class="profile-photo bg-secondary text-white d-flex align-items-center justify-content-center">{{ student.first_name|first }}</div>
+                            {% endif %}
+                        </td>
+                        <td>{{ student.roll_number }}</td>
+                        <td><a href="{% url 'students:detail' student.pk %}">{{ student.full_name }}</a></td>
+                        <td>{{ student.student_class }}</td>
+                        <td>{{ student.get_gender_display }}</td>
+                        <td>{{ student.contact_number }}</td>
+                        <td>{{ student.father_name }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'students:detail' student.pk %}" class="btn btn-info" title="View"><i class="bi bi-eye"></i></a>
+                                <a href="{% url 'students:edit' student.pk %}" class="btn btn-warning" title="Edit"><i class="bi bi-pencil"></i></a>
+                                <a href="{% url 'students:delete' student.pk %}" class="btn btn-danger delete-btn" title="Delete"><i class="bi bi-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted py-4">No students found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if current_class %}&class={{ current_class }}{% endif %}">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if current_class %}&class={{ current_class }}{% endif %}">{{ page_obj.previous_page_number }}</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if current_class %}&class={{ current_class }}{% endif %}">{{ page_obj.next_page_number }}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if current_class %}&class={{ current_class }}{% endif %}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

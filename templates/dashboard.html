@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{% if user.is_authenticated %}Dashboard{% else %}Home{% endif %} - Student Management System{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0"><i class="bi bi-speedometer2"></i> Dashboard</h4>
+    <span class="text-muted">{% now "l, d F Y" %}</span>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Students</h6>
+                        <h2 class="mb-0">{{ total_students }}</h2>
+                    </div>
+                    <i class="bi bi-people-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted mb-1">Today's Attendance</h6>
+                        <h2 class="mb-0">{{ today_attendance_pct }}%</h2>
+                        <small class="text-muted">{{ today_present }}/{{ today_total_attendance }}</small>
+                    </div>
+                    <i class="bi bi-calendar-check-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted mb-1">Branches</h6>
+                        <h2 class="mb-0">{{ classes_count|default:"0" }}</h2>
+                    </div>
+                    <i class="bi bi-building stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted mb-1">Exams</h6>
+                        <h2 class="mb-0">{{ exams_count|default:"0" }}</h2>
+                    </div>
+                    <i class="bi bi-award-fill stat-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-lightning-charge-fill"></i> Quick Actions</div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'students:add' %}" class="btn btn-primary"><i class="bi bi-person-plus"></i> Add New Student</a>
+                    <a href="{% url 'attendance:mark' %}" class="btn btn-success"><i class="bi bi-calendar-check"></i> Mark Today's Attendance</a>
+                    <a href="{% url 'results:manage' %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Enter Results</a>
+                    <a href="{% url 'results:class_summary' %}" class="btn btn-info"><i class="bi bi-bar-chart"></i> View Branch Summary</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-clock-history"></i> Recent Activity</div>
+            <div class="card-body">
+                <p class="text-muted text-center py-4">Welcome to the Student Management System!<br>Use the navigation menu to manage students, attendance, and results.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row min-vh-75 align-items-center justify-content-center py-5">
+    <div class="col-12 text-center mb-4">
+        <i class="bi bi-mortarboard-fill text-primary" style="font-size: 4rem;"></i>
+        <h1 class="mt-3 fw-bold">Student Management System</h1>
+        <p class="text-muted lead">Efficiently manage students, attendance, and results</p>
+    </div>
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+        <div class="card text-center h-100 shadow-sm">
+            <div class="card-body py-4">
+                <i class="bi bi-shield-lock text-primary" style="font-size: 3rem;"></i>
+                <h4 class="mt-3">Staff Login</h4>
+                <p class="text-muted small">Access dashboard for managing students, attendance, and results.</p>
+                <a href="{% url 'accounts:login' %}" class="btn btn-primary w-100">Sign In as Staff</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+        <div class="card text-center h-100 shadow-sm">
+            <div class="card-body py-4">
+                <i class="bi bi-person-circle text-success" style="font-size: 3rem;"></i>
+                <h4 class="mt-3">Student Login</h4>
+                <p class="text-muted small">View your attendance, results, and report card.</p>
+                <a href="{% url 'accounts:student_login' %}" class="btn btn-success w-100">Sign In as Student</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

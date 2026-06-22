@@ -1,0 +1,8 @@
+Dear {{ student.full_name }},
+
+Congratulations! Your application to join "{{ club.name }}" has been approved.
+
+You are now a member of the club. Welcome aboard!
+
+Best regards,
+Miracle Institute of Technology

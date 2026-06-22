@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ student.full_name }} - Student Profile{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-person-badge"></i> Student Profile</h4>
+    <div>
+        <a href="{% url 'students:edit' student.pk %}" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
+        <a href="{% url 'students:list' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                {% if student.profile_photo %}
+                <img src="{{ student.profile_photo.url }}" class="profile-photo-lg mb-3" alt="">
+                {% else %}
+                <div class="profile-photo-lg bg-secondary text-white d-flex align-items-center justify-content-center mx-auto mb-3" style="font-size: 3rem;">{{ student.first_name|first }}{{ student.last_name|first }}</div>
+                {% endif %}
+                <h5>{{ student.full_name }}</h5>
+                <p class="text-muted mb-1">{{ student.roll_number }}</p>
+                <span class="badge bg-primary">{{ student.student_class }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Personal Details</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Date of Birth</label>
+                        <p class="mb-0">{{ student.date_of_birth }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Gender</label>
+                        <p class="mb-0">{{ student.get_gender_display }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Email</label>
+                        <p class="mb-0">{{ student.email|default:"-" }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Contact</label>
+                        <p class="mb-0">{{ student.contact_number }}</p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="text-muted small">Address</label>
+                        <p class="mb-0">{{ student.address|default:"-" }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Father's Name</label>
+                        <p class="mb-0">{{ student.father_name }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Mother's Name</label>
+                        <p class="mb-0">{{ student.mother_name }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Guardian Contact</label>
+                        <p class="mb-0">{{ student.guardian_contact }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">Admission Date</label>
+                        <p class="mb-0">{{ student.admission_date }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Recent Attendance</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr><th>Date</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for a in attendance_records %}
+                            <tr>
+                                <td>{{ a.date }}</td>
+                                <td><span class="badge badge-{{ a.status }}">{{ a.get_status_display }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="2" class="text-muted text-center">No attendance records</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Recent Results</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr><th>Exam</th><th>Subject</th><th>Marks</th><th>Grade</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for r in results %}
+                            <tr>
+                                <td>{{ r.exam.name }}</td>
+                                <td>{{ r.subject.name }}</td>
+                                <td>{{ r.marks_obtained }}/{{ r.subject.max_marks }}</td>
+                                <td><span class="badge bg-{% if r.is_pass %}success{% else %}danger{% endif %}">{{ r.grade }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="text-muted text-center">No results yet</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
